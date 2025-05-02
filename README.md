@@ -53,7 +53,7 @@ A buffer is a linked list consuming each byte from the FIX message until it reac
 Equals (0x3d) characters. If it reaches Equals (0x3d) character , the buffer is converted into a float FIX field tag. 
 If it reaches SOH (0x01) character, the buffer remains the same as FIX field value.
 
-Using a float FIX field tag is because there can be duplicated tag, the first decimal place digit is to distinguish and 
+Using a float FIX field tag is because there can be duplicated tag, the decimal place digits are to distinguish and 
 arrange the duplicated tags in order. See New Order Single (D) FIX message in the next section.
 
 #### Use a map to store the buffer
