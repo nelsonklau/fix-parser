@@ -1,9 +1,6 @@
 ## FIX Parser
 
-FIX Parser aims to accept a FIX message in the form of byte array and display a well-formed FIX message string.
-
-The program spins up and prompts the byte array FIX message. The converted FIX message string is pretty printed in 
-CLI stdout.
+FIX Parser aims to accept a FIX message in the form of byte array and parses it into a map of tag-value pairs.
 
 ### Getting Started
 
@@ -43,7 +40,7 @@ Run either one of the following commands in bash or zsh to build FIX Parser.
 #### Use a buffer to read the byte array FIX message
 
 Consider the following Logon (A) FIX message having the corresponding byte array representation, where a control character SOH
-(Start of Heading) has 0x01 and a printable character = (Equals) has 0x3d.
+(Start of Heading) has 0x01 and a printable character (Equals) has 0x3d.
 
       8=FIX.4.49=10235=A49=BuySide56=SellSide34=152=20190605-11:40:30.39298=0108=30141=Y553=Username554=Password10=104
 
@@ -91,12 +88,31 @@ are stored as:
       | SecurityAltIDSource (456.3) | ---> 0x31 (aka '1' CUSIP)
       +-----------------------------+
 
+The following stack of groups is used to track the current group context. For instance, NoLegs (555) 
+has LegStipulations (683) and NestedParties (539). The stack of groups has this picture based on the 
+computational time point.
+
+      +-----------------------------+                              +-----------------------------+
+      | LegStipulations (683)       | <--- current group           | NestedParties (539)         | <--- current group
+      +-----------------------------+                              +-----------------------------+
+      | NoLegs (555)                |                              | NoLegs (555)                |
+      +-----------------------------+                              +-----------------------------+
+                  At t+0                                                        At t+1            
+
 The map of float to byte array initial capacity is the number of SOH (0x01) characters and load factor is 1, 
-expecting each float FIX field tag is allocated a bucket, where load factor = number of entry / number of bucket.
+expecting each float FIX field tag is allocated a bucket and no need to re-size the internal array of buckets.
+
+Note that load factor = number of entry / number of bucket.
+
+#### Considerations and limitations
+
+FIX parser assumes every byte array FIX message ends with SOH (0x01) character and the byte array contains one and 
+only one complete FIX message. At most 10 elements are allowed within the same group, say the above 
+NoSecurityAltID (454) can have SecurityAltID (455.0)..(455.9) and SecurityAltIDSource (456.0)..(456.9).
 
 ### References
 
-FIX Parser conforms to FIX 4.4 protocols. See [FIX 4.4 Dictionary](https://fix.dev/organizations/fix-standards/specs/1000001/messages).
+FIX Parser conforms to FIX 4.4 protocols. See [FIX 4.4 Dictionary](https://fix.dev/organizations/fix-standards/specs/1000001/components).
 
 ASCII control characters (character code 0-31) and printable characters (character code 32-127) are in reference to 
 [ASCII Table](https://www.ascii-code.com/ASCII).
