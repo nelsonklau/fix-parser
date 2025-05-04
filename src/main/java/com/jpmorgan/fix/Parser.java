@@ -54,6 +54,7 @@ public final class Parser {
                     groupMemberSnapshot = new ArrayList<>(GROUP_MEMBER_DEFINITIONS.get((int) tag));
                 } else if (groupMemberSnapshot.contains((int) tag)) groupMemberSnapshot.remove((Integer) (int) tag);
                 if (!currentGroup.isEmpty() && groupMemberSnapshot.isEmpty()) {
+                    // TODO: handle missing 305.1, 311.1, 309.1
                     indexWithinGroup += 0.1f;
                     int groupTag = currentGroup.peek().intValue();
                     groupMemberSnapshot = new ArrayList<>(GROUP_MEMBER_DEFINITIONS.get(groupTag));
