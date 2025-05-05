@@ -18,7 +18,7 @@ class ParserTest {
 
     @ParameterizedTest
     @MethodSource("validByteArraySource")
-    void testParseValidByteArray(byte[] message, Supplier<Map<Float, List<Byte>>> expected) {
+    void testParseValidByteArray(String objective, byte[] message, Supplier<Map<Float, List<Byte>>> expected) {
         // when
         Map<Float, List<Byte>> actual = assertDoesNotThrow(() -> parser.parse(message));
         // then
@@ -27,9 +27,11 @@ class ParserTest {
 
     private static Stream<Arguments> validByteArraySource() {
         return Stream.of(
-                // Valid scenario 1: A flatten FIX message having no repeating groups
                 // Logon (A): 8=FIX.4.49=10235=A49=BuySide56=SellSide34=152=20190605-11:40:30.39298=0108=30141=Y553=Username554=Password10=104
-                Arguments.of(new byte[]{0x38, 0x3d, 0x46, 0x49, 0x58, 0x2e, 0x34, 0x2e, 0x34, 0x01,
+                Arguments.of(
+                        "Scenario 1: A flatten FIX message having no repeating groups",
+                        new byte[]{
+                                0x38, 0x3d, 0x46, 0x49, 0x58, 0x2e, 0x34, 0x2e, 0x34, 0x01,
                                 0x39, 0x3d, 0x31, 0x30, 0x32, 0x01,
                                 0x33, 0x35, 0x3d, 0x41, 0x01,
                                 0x34, 0x39, 0x3d, 0x42, 0x75, 0x79, 0x53, 0x69, 0x64, 0x65, 0x01,
@@ -64,9 +66,11 @@ class ParserTest {
                         }
                 ),
 
-                // Valid scenario 2: A 1-level FIX message having repeating groups, 1-optional group NoSecurityAltID (454) members exist
                 // New Order Single (D): 8=FIX.4.49=14835=D34=108049=TESTBUY152=20180920-18:14:19.50856=TESTSELL111=63673064027889863415=USD21=238=7000854=040=154=155=MSFT48=MSFT.OQ22=5454=4455=MSFT US456=A455=US5949181045456=4455=2588173456=2455=594918104456=160=20180920-18:14:19.49210=092
-                Arguments.of(new byte[]{0x38, 0x3d, 0x46, 0x49, 0x58, 0x2e, 0x34, 0x2e, 0x34, 0x01,
+                Arguments.of(
+                        "Scenario 2: A 1-level FIX message having repeating groups, 1-optional group NoSecurityAltID (454) members exist",
+                        new byte[]{
+                                0x38, 0x3d, 0x46, 0x49, 0x58, 0x2e, 0x34, 0x2e, 0x34, 0x01,
                                 0x39, 0x3d, 0x31, 0x34, 0x38, 0x01,
                                 0x33, 0x35, 0x3d, 0x44, 0x01,
                                 0x33, 0x34, 0x3d, 0x31, 0x30, 0x38, 0x30, 0x01,
@@ -133,9 +137,11 @@ class ParserTest {
                         }
                 ),
 
-                // Valid scenario 3: A 1-level FIX message having repeating groups, 2-optional group NoUnderlyings (711) and NoSecurityAltID (454) members exist
                 // New Order Single (D): 8=FIX.4.49=14835=D34=108049=TESTBUY152=20180920-18:14:19.50856=TESTSELL111=63673064027889863415=USD21=238=7000854=040=154=1711=2311=MSFT.OQ309=MSFT.OQ305=5311=MSFT.OQ309=MSFT.OQ305=555=MSFT48=MSFT.OQ22=5454=4455=MSFT US456=A455=US5949181045456=4455=2588173456=2455=594918104456=160=20180920-18:14:19.49210=092
-                Arguments.of(new byte[]{0x38, 0x3d, 0x46, 0x49, 0x58, 0x2e, 0x34, 0x2e, 0x34, 0x01,
+                Arguments.of(
+                        "Scenario 3: A 1-level FIX message having repeating groups, 2-optional group NoUnderlyings (711) and NoSecurityAltID (454) members exist",
+                        new byte[]{
+                                0x38, 0x3d, 0x46, 0x49, 0x58, 0x2e, 0x34, 0x2e, 0x34, 0x01,
                                 0x39, 0x3d, 0x31, 0x34, 0x38, 0x01,
                                 0x33, 0x35, 0x3d, 0x44, 0x01,
                                 0x33, 0x34, 0x3d, 0x31, 0x30, 0x38, 0x30, 0x01,
