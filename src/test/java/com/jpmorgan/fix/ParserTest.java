@@ -64,7 +64,7 @@ class ParserTest {
                         }
                 ),
 
-                // Valid scenario 2: A 2-layer FIX message having repeating groups, full group members exist
+                // Valid scenario 2: A 1-level FIX message having repeating groups, 1-optional group NoSecurityAltID (454) members exist
                 // New Order Single (D): 8=FIX.4.49=14835=D34=108049=TESTBUY152=20180920-18:14:19.50856=TESTSELL111=63673064027889863415=USD21=238=7000854=040=154=155=MSFT48=MSFT.OQ22=5454=4455=MSFT US456=A455=US5949181045456=4455=2588173456=2455=594918104456=160=20180920-18:14:19.49210=092
                 Arguments.of(new byte[]{0x38, 0x3d, 0x46, 0x49, 0x58, 0x2e, 0x34, 0x2e, 0x34, 0x01,
                                 0x39, 0x3d, 0x31, 0x34, 0x38, 0x01,
@@ -114,20 +114,18 @@ class ParserTest {
                                     54.0f, List.of((byte) 0x31),
                                     55.0f, List.of((byte) 0x4d, (byte) 0x53, (byte) 0x46, (byte) 0x54),
                                     48.0f, List.of((byte) 0x4d, (byte) 0x53, (byte) 0x46, (byte) 0x54, (byte) 0x2e, (byte) 0x4f, (byte) 0x51),
-                                    22.0f, List.of((byte) 0x35)
-                            ));
-                            expected.putAll(Map.of(
+                                    22.0f, List.of((byte) 0x35),
                                     454.0f, List.of((byte) 0x34),
                                     455.0f, List.of((byte) 0x4d, (byte) 0x53, (byte) 0x46, (byte) 0x54, (byte) 0x20, (byte) 0x55, (byte) 0x53),
-                                    456.0f, List.of((byte) 0x41),
+                                    456.0f, List.of((byte) 0x41)
+                            ));
+                            expected.putAll(Map.of(
                                     455.1f, List.of((byte) 0x55, (byte) 0x53, (byte) 0x35, (byte) 0x39, (byte) 0x34, (byte) 0x39, (byte) 0x31, (byte) 0x38, (byte) 0x31, (byte) 0x30, (byte) 0x34, (byte) 0x35),
                                     456.1f, List.of((byte) 0x34),
                                     455.2f, List.of((byte) 0x32, (byte) 0x35, (byte) 0x38, (byte) 0x38, (byte) 0x31, (byte) 0x37, (byte) 0x33),
                                     456.2f, List.of((byte) 0x32),
                                     455.3f, List.of((byte) 0x35, (byte) 0x39, (byte) 0x34, (byte) 0x39, (byte) 0x31, (byte) 0x38, (byte) 0x31, (byte) 0x30, (byte) 0x34),
-                                    456.3f, List.of((byte) 0x31)
-                            ));
-                            expected.putAll(Map.of(
+                                    456.3f, List.of((byte) 0x31),
                                     60.0f, List.of((byte) 0x32, (byte) 0x30, (byte) 0x31, (byte) 0x38, (byte) 0x30, (byte) 0x39, (byte) 0x32, (byte) 0x30, (byte) 0x2d, (byte) 0x31, (byte) 0x38, (byte) 0x3a, (byte) 0x31, (byte) 0x34, (byte) 0x3a, (byte) 0x31, (byte) 0x39, (byte) 0x2e, (byte) 0x34, (byte) 0x39, (byte) 0x32),
                                     10.0f, List.of((byte) 0x30, (byte) 0x39, (byte) 0x32)
                             ));
@@ -135,7 +133,7 @@ class ParserTest {
                         }
                 ),
 
-                // Valid scenario 3: A 2-layer FIX message having repeating groups, partial group members exist
+                // Valid scenario 3: A 1-level FIX message having repeating groups, 2-optional group NoUnderlyings (711) and NoSecurityAltID (454) members exist
                 // New Order Single (D): 8=FIX.4.49=14835=D34=108049=TESTBUY152=20180920-18:14:19.50856=TESTSELL111=63673064027889863415=USD21=238=7000854=040=154=1711=2311=MSFT.OQ309=MSFT.OQ305=5311=MSFT.OQ309=MSFT.OQ305=555=MSFT48=MSFT.OQ22=5454=4455=MSFT US456=A455=US5949181045456=4455=2588173456=2455=594918104456=160=20180920-18:14:19.49210=092
                 Arguments.of(new byte[]{0x38, 0x3d, 0x46, 0x49, 0x58, 0x2e, 0x34, 0x2e, 0x34, 0x01,
                                 0x39, 0x3d, 0x31, 0x34, 0x38, 0x01,
