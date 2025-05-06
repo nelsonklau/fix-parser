@@ -43,19 +43,16 @@ public final class Parser {
                     Set<Integer> d = GROUP_MEMBER_DEFINITIONS.get((int) tag);
                     defs = new HashSet<>(d.size(), 1);
                     defs.addAll(d);
-                } else if (defs.contains((int) tag)) defs.remove((int) tag);
-                // handle current group tags
-                if (!currentGroup.isEmpty() && !optionalDefs.contains((int) tag)) {
+                } else if (defs.contains((int) tag)) defs.remove((int) tag);        // handle current mandatory group member tags
+                if (!currentGroup.isEmpty() && !optionalDefs.contains((int) tag)) { // handle current optional group member tags
                     int groupTag = currentGroup.peek().intValue();
                     if (OPTIONAL_GROUP_MEMBER_DEFINITIONS.get(groupTag).contains((int) tag))
                         optionalDefs.add((int) tag);
                 } else {
-                    // handle next group tags
+                    // handle next group member tags
                     if (!currentGroup.isEmpty() && currentGroup.peek() != tag &&
-                            // when all mandatory and optional tags in current group are cleared
-                            defs.isEmpty() && (optionalDefs.isEmpty() ||
-                            // when current tag is optional
-                            optionalDefs.contains((int) tag))) {
+                            defs.isEmpty() && (optionalDefs.isEmpty() || // when all mandatory and optional tags in current group are cleared
+                            optionalDefs.contains((int) tag))) {         // when current tag is optional
                         int groupTag = currentGroup.peek().intValue();
                         memberIndex += 0.1f;
                         tag = (float) Math.floor((tag + 0.1f) * 100) / 100;
