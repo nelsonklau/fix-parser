@@ -5,11 +5,6 @@ import java.util.*;
 public final class Parser {
 
     private final Stack<Float> currentGroup = new Stack<>();
-    private final Map<Integer, Integer> groupOccurrences = new HashMap<>(60, 1);
-
-    public Parser() {
-        GROUP_TAGS.forEach(group -> groupOccurrences.put(group, 0));
-    }
 
     /**
      * Parse the input byte array into a map storing parsed tag-value pairs.
@@ -43,7 +38,7 @@ public final class Parser {
                     }
                 }
                 // handle current tag being a group, i.e. NumInGroup field type
-                if (groupOccurrences.containsKey((int) tag)) {
+                if (GROUP_TAGS.contains((int) tag)) {
                     currentGroup.push(tag);
                     Set<Integer> d = GROUP_MEMBER_DEFINITIONS.get((int) tag);
                     defs = new HashSet<>(d.size(), 1);
@@ -78,7 +73,6 @@ public final class Parser {
                 ArrayList<Byte> value = new ArrayList<>(buf.size());
                 while ((b1 = buf.poll()) != null) value.add(b1);
                 result.put(tag, value);
-                groupOccurrences.computeIfPresent((int) tag, (k, v) -> parseToInt(value));
                 continue;
             }
             buf.add(b);
@@ -105,13 +99,6 @@ public final class Parser {
             (byte) 0x38, 8.0f,
             (byte) 0x39, 9.0f
     );
-
-    private int parseToInt(List<Byte> value) {
-        int result = 0;
-        for (int i = value.size() - 1, exponent = 0; i >= 0; i--)
-            result += DIGITS.get(value.get(i)).intValue() * (int) Math.pow(10, exponent++);
-        return result;
-    }
 
     private float parseTag(Deque<Byte> buf, float memberIndex) {
         Byte b;
