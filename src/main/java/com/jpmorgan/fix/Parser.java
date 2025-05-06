@@ -34,65 +34,65 @@ public final class Parser {
         int initialCapacity = 0;
         for (byte b : message) if (b == SOH) initialCapacity++;
         HashMap<Float, List<Byte>> result = new HashMap<>(initialCapacity, 1);
-        Deque<Byte> buffer = new LinkedList<>();
-        List<Integer> optionalSnapshot = new LinkedList<>();
-        Set<Integer> groupMemberSnapshot = Set.of();
-        float tag = 0, indexWithinGroup = 0;
+        Deque<Byte> buf = new LinkedList<>();
+        LinkedList<Integer> optionalDefs = new LinkedList<>();
+        Set<Integer> defs = Set.of();
+        float tag = 0, memberIndex = 0;
         for (byte b : message) {
             if (b == EQUALS) {
                 // handle root level tags
-                tag = parseTag(buffer, indexWithinGroup);
+                tag = parseTag(buf, memberIndex);
                 if (!currentGroup.isEmpty()) {
                     int groupTag = currentGroup.peek().intValue();
                     if (!GROUP_MEMBER_DEFINITIONS.get(groupTag).contains((int) tag) &&
                             !OPTIONAL_GROUP_MEMBER_DEFINITIONS.get(groupTag).contains((int) tag)) {
                         tag = (int) tag;
-                        groupMemberSnapshot = Set.of();
-                        optionalSnapshot.clear();
-                        indexWithinGroup = 0;
+                        defs = Set.of();
+                        optionalDefs.clear();
+                        memberIndex = 0;
                         currentGroup.pop();
                     }
                 }
                 // handle current tag being a group, i.e. NumInGroup field type
                 if (groupOccurrences.containsKey((int) tag)) {
                     currentGroup.push(tag);
-                    Set<Integer> groupMemberDefinition = GROUP_MEMBER_DEFINITIONS.get((int) tag);
-                    groupMemberSnapshot = new HashSet<>(groupMemberDefinition.size(), 1);
-                    groupMemberSnapshot.addAll(groupMemberDefinition);
-                } else if (groupMemberSnapshot.contains((int) tag)) groupMemberSnapshot.remove((int) tag);
+                    Set<Integer> d = GROUP_MEMBER_DEFINITIONS.get((int) tag);
+                    defs = new HashSet<>(d.size(), 1);
+                    defs.addAll(d);
+                } else if (defs.contains((int) tag)) defs.remove((int) tag);
                 // handle current group tags
-                if (!currentGroup.isEmpty() && !optionalSnapshot.contains((int) tag)) {
+                if (!currentGroup.isEmpty() && !optionalDefs.contains((int) tag)) {
                     int groupTag = currentGroup.peek().intValue();
                     if (OPTIONAL_GROUP_MEMBER_DEFINITIONS.get(groupTag).contains((int) tag))
-                        optionalSnapshot.add((int) tag);
+                        optionalDefs.add((int) tag);
                 } else {
                     // handle next group tags
                     if (!currentGroup.isEmpty() && currentGroup.peek() != tag &&
                             // when all mandatory and optional tags in current group are cleared
-                            groupMemberSnapshot.isEmpty() && (optionalSnapshot.isEmpty() ||
+                            defs.isEmpty() && (optionalDefs.isEmpty() ||
                             // when current tag is optional
-                            optionalSnapshot.contains((int) tag))) {
+                            optionalDefs.contains((int) tag))) {
                         int groupTag = currentGroup.peek().intValue();
-                        indexWithinGroup += 0.1f;
+                        memberIndex += 0.1f;
                         tag = (float) Math.floor((tag + 0.1f) * 100) / 100;
-                        Set<Integer> groupMemberDefinition = GROUP_MEMBER_DEFINITIONS.get(groupTag);
-                        groupMemberSnapshot = new HashSet<>(groupMemberDefinition.size(), 1);
-                        groupMemberSnapshot.addAll(groupMemberDefinition);
-                        optionalSnapshot.clear();
-                        optionalSnapshot.add((int) tag);
+                        Set<Integer> d = GROUP_MEMBER_DEFINITIONS.get(groupTag);
+                        defs = new HashSet<>(d.size(), 1);
+                        defs.addAll(d);
+                        optionalDefs.clear();
+                        optionalDefs.add((int) tag);
                     }
                 }
                 continue;
             }
             if (b == SOH) {
                 Byte b1;
-                ArrayList<Byte> value = new ArrayList<>(buffer.size());
-                while ((b1 = buffer.poll()) != null) value.add(b1);
+                ArrayList<Byte> value = new ArrayList<>(buf.size());
+                while ((b1 = buf.poll()) != null) value.add(b1);
                 result.put(tag, value);
                 groupOccurrences.computeIfPresent((int) tag, (k, v) -> parseToInt(value));
                 continue;
             }
-            buffer.add(b);
+            buf.add(b);
         }
         return result;
     }
@@ -281,12 +281,12 @@ public final class Parser {
         return result;
     }
 
-    private float parseTag(Deque<Byte> buffer, float indexWithinGroup) {
+    private float parseTag(Deque<Byte> buf, float memberIndex) {
         Byte b;
         int exponent = 0;
         float tag = 0;
-        while ((b = buffer.pollLast()) != null)
+        while ((b = buf.pollLast()) != null)
             tag += DIGITS.get(b) * (float) Math.pow(10, exponent++);
-        return tag + indexWithinGroup;
+        return tag + memberIndex;
     }
 }
