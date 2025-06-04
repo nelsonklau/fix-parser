@@ -28,14 +28,14 @@ class PerformanceTest {
      * Statistically, 5,000 iterations are recommended to warm up the JVM heap. One sample has the following output:
      *
      * <pre>
-     * 5 iterations to parse the message in 78.7910 ms
-     * 50 iterations to parse the message in 40.7080 ms
-     * 500 iterations to parse the message in 3.0420 ms
-     * 5,000 iterations to parse the message in 2.2920 ms
-     * 5,000,000 iterations to parse the message in 3.0420 ms
+     * 5 iterations to parse the message in 52.6250 μs
+     * 50 iterations to parse the message in 17.2080 μs
+     * 500 iterations to parse the message in 2.9590 μs
+     * 5,000 iterations to parse the message in 3.4170 μs
+     * 5,000,000 iterations to parse the message in 2.9170 μs
      * </pre>
      * <p>
-     * 500 iterations warm up having 3.209 ms outperforms 5000 iterations.
+     * 500 iterations warm up having 2.9590 μs outperforms 5000 iterations.
      *
      * @param numberOfTrial The number of times to iterate parsing Logon (A) FIX message for warm up
      */
@@ -56,6 +56,6 @@ class PerformanceTest {
         parser.parse(message);
         // then
         double elapsed = System.nanoTime() - begin;
-        System.out.printf("%,d iterations to parse the message in %.4f ms%n", numberOfTrial, elapsed / 1000);
+        System.out.printf("%,d iterations to parse the message in %.4f μs%n", numberOfTrial, elapsed / 1000);
     }
 }
